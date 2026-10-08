@@ -53,3 +53,12 @@ add_executable(tetris_core_tests tests/core_tests.cpp)
 target_link_libraries(tetris_core_tests PRIVATE tetris_core)
 add_test(NAME tetris_core_tests COMMAND tetris_core_tests)
 
+if(WIN32)
+    add_executable(tetris_windows_ui_tests tests/windows_ui_tests.cpp)
+    target_link_libraries(tetris_windows_ui_tests PRIVATE tetris_core gdi32 user32)
+    add_test(NAME tetris_windows_ui_tests
+        COMMAND tetris_windows_ui_tests "${CMAKE_BINARY_DIR}/test-evidence/native-ui")
+    set_tests_properties(tetris_windows_ui_tests PROPERTIES
+        TIMEOUT 90 WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+endif()
+

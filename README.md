@@ -157,7 +157,10 @@ tests/core_tests.cpp
 ```
 
 CI runs the portable core tests on Ubuntu, macOS, and Windows. Windows also
-builds the GUI, checks that the packaged app opens and closes, and uploads a
-downloadable x64 package. This startup check does not replace a gameplay,
-input, or audio playtest.
+runs real-window integration tests against the unchanged Win32 input/rendering
+code using deterministic board fixtures, then sends keyboard messages to the
+packaged executable for a gameplay smoke pass. Screenshots and assertion
+reports are uploaded as `tetris-windows-test-evidence`; the downloadable game
+is `tetris-windows-x64`. These artifacts expire after 30 days. Automated tests
+do not replace human checks of input feel, visual quality, or audible sound.
 

@@ -33,37 +33,25 @@ jobs:
         run: cmake --build build --config Release
 
       - name: Run tests
-        run: ctest --test-dir build --build-config Release --output-on-failure
+        run: ctest --test-dir build --build-config Release --output-on-failure --verbose
 
       - name: Package Windows build
         if: runner.os == 'Windows'
         run: cmake --install build --config Release --prefix dist/tetris-windows-x64
 
-      - name: Smoke test packaged Windows app
+      - name: Exercise packaged Windows gameplay
         if: runner.os == 'Windows'
         shell: pwsh
-        run: |
-          $package = (Resolve-Path dist/tetris-windows-x64).Path
-          $app = Start-Process -FilePath "$package/main.exe" -WorkingDirectory $package -PassThru
-          try {
-            if (-not $app.WaitForInputIdle(10000)) {
-              throw 'The packaged app did not become ready within 10 seconds.'
-            }
-            $app.Refresh()
-            if ($app.HasExited -or $app.MainWindowHandle -eq 0) {
-              throw 'The packaged app did not open a window.'
-            }
-            if (-not $app.CloseMainWindow() -or -not $app.WaitForExit(10000)) {
-              throw 'The packaged app did not close cleanly.'
-            }
-            if ($app.ExitCode -ne 0) {
-              throw "The packaged app exited with code $($app.ExitCode)."
-            }
-          } finally {
-            if (-not $app.HasExited) { $app.Kill() }
-          }
-          # Do not include the smoke test's generated save data in the download.
-          Remove-Item "$package/tetris_highscore.txt", "$package/tetris_leaderboard.txt", "$package/tetris_settings.txt" -ErrorAction SilentlyContinue
+        run: ./tests/windows_package_smoke.ps1 -PackageDirectory dist/tetris-windows-x64 -EvidenceDirectory build/test-evidence/packaged-app
+
+      - name: Upload Windows test evidence
+        if: always() && runner.os == 'Windows'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tetris-windows-test-evidence
+          path: build/test-evidence/
+          if-no-files-found: warn
+          retention-days: 30
 
       - name: Upload Windows build
         if: runner.os == 'Windows'
