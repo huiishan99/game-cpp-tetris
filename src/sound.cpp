@@ -8,6 +8,9 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <windows.h>
 #include <mmsystem.h>
 #include <vector>
@@ -836,3 +839,4 @@ void ShutdownSound()
 {
     ShutdownMixer();
 }
+
