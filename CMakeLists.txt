@@ -6,6 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Keep the MSVC package self-contained without a separate VC++ runtime install.
+if(MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
 set(TETRIS_CORE_SOURCES
     src/block.cpp
     src/blocks.cpp
@@ -27,6 +32,11 @@ if(WIN32)
     add_executable(tetris WIN32 src/main.cpp)
     set_target_properties(tetris PROPERTIES OUTPUT_NAME "main")
     target_link_libraries(tetris PRIVATE tetris_core gdi32 user32)
+
+    install(TARGETS tetris RUNTIME DESTINATION .)
+    install(FILES Font/monogram.ttf DESTINATION Font)
+    install(FILES README.md VERSION DEVLOG.md ROADMAP.md DESTINATION .)
+    install(DIRECTORY docs/ DESTINATION docs)
 else()
     message(STATUS "Win32 GUI target is skipped on this platform; building the portable core only.")
 endif()
@@ -42,3 +52,4 @@ enable_testing()
 add_executable(tetris_core_tests tests/core_tests.cpp)
 target_link_libraries(tetris_core_tests PRIVATE tetris_core)
 add_test(NAME tetris_core_tests COMMAND tetris_core_tests)
+

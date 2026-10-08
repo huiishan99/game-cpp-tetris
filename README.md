@@ -69,6 +69,16 @@ leaderboard is saved to `tetris_leaderboard.txt`.
 
 ## Build And Play
 
+### Download a Windows build
+
+Open a successful [CI run](https://github.com/huiishan99/game-cpp-tetris/actions/workflows/ci.yml)
+and download the `tetris-windows-x64` artifact (GitHub sign-in required).
+Extract the ZIP into a writable folder, keep the `Font` folder beside
+`main.exe`, and run `main.exe`. The MSVC build includes its C++ runtime and
+does not need the old MinGW DLLs from `lib`.
+
+### Build from source
+
 On Windows, open PowerShell in the project folder:
 
 ```powershell
@@ -106,6 +116,14 @@ cmake --build build --config Release
 .\build\Release\main.exe
 ```
 
+To stage the CMake build with its font and documentation:
+
+```powershell
+cmake --install build --config Release --prefix dist/tetris-windows-x64
+cd dist/tetris-windows-x64
+.\main.exe
+```
+
 ## Core Tests
 
 The game rules are portable and can be tested without the Win32 window:
@@ -138,4 +156,8 @@ src/sound.cpp       Procedural Windows WAV cues, no-op elsewhere
 tests/core_tests.cpp
 ```
 
-CI runs the portable core tests on Ubuntu, macOS, and Windows.
+CI runs the portable core tests on Ubuntu, macOS, and Windows. Windows also
+builds the GUI, checks that the packaged app opens and closes, and uploads a
+downloadable x64 package. This startup check does not replace a gameplay,
+input, or audio playtest.
+
