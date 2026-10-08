@@ -1,166 +1,115 @@
-# Native C++ Tetris
+# C++ Tetris
 
-A fast, native Windows Tetris built with C++ and the Win32 API. No Raylib, no
-engine, no asset pipeline to set up. Just build it and play.
+A small Tetris game for Windows, written in C++ with the Win32 API. It has
+hold, a ghost piece, a three-piece preview, and a local leaderboard to give
+you a score to beat next time.
 
-The game has grown from a small practice project into a sharper arcade-style
-Tetris with hold, ghost piece, spin clears, combo feedback, persistent best
-score, and a dark pixel UI.
+![A game in progress, with hold and next-piece previews](docs/screenshots/gameplay.png)
 
-![Native C++ Tetris gameplay preview](docs/gameplay-preview.svg)
+## Play on Windows
 
-## Why It Feels Good
+1. Open the [CI builds](https://github.com/huiishan99/game-cpp-tetris/actions/workflows/ci.yml)
+   and choose a recent run with a successful Windows job.
+2. Download **tetris-windows-x64** from the run's **Artifacts** section.
+3. Extract the ZIP into a writable folder and run **main.exe**. Keep the
+   **Font** folder beside it.
 
-- Hold, ghost landing, and a three-piece next queue for planning ahead
-- Short lock delay so grounded pieces can still be nudged into place
-- DAS/ARR-style hold-to-move input for smoother left and right slides
-- Clockwise and counter-clockwise SRS-style wall kicks for cleaner rotations
-- T-spin scoring plus custom L/J/I/S/Z style-spin clears
-- Faster line-clear flash, combo, back-to-back, perfect clear, level-up feedback, and best score
-- Main menu, pause menu, restart, leaderboard view, and game-over overlays
-- Local top-five leaderboard with name entry on qualifying scores
-- In-game tuning presets for DAS, ARR, clear effect speed, controls, window scale, and sound
-- Pixel-style font with compact Win32 rendering
-- Layered procedural WAV cues for moves, drops, hold, rotate, clears, spins, B2B, perfect clear, level-up, pause, and game over
+GitHub requires you to sign in to download artifacts, and each build expires
+after 30 days. These are CI builds; there isn't a separate Releases download
+yet. The downloadable build doesn't need a separate C++ runtime installation.
+
+Select **START** and press Enter to play.
 
 ## Controls
 
-| Key | Action |
+These are the default controls. Hold a movement key to slide across the board.
+
+| Action | Key |
 | --- | --- |
-| Up / Down or W / S in menus | Choose menu item |
-| Enter / Space in menus | Select menu item |
-| Left / Right or A / D | Move, hold to slide |
-| Down or S | Soft drop |
-| Up / W / X | Rotate clockwise |
-| Z | Rotate counter-clockwise |
-| Space | Hard drop |
-| C or Shift | Hold |
-| P or Esc | Pause |
-| F1 | Settings |
-| Space while paused | Continue from pause menu |
-| R | Restart |
-| Q | Quit |
+| Move | Left / Right or A / D |
+| Soft drop | Down or S |
+| Hard drop | Space |
+| Rotate clockwise | Up, W or X |
+| Rotate counter-clockwise | Z |
+| Hold | C or Shift |
+| Pause / resume | P or Esc |
+| Settings | F1 |
+| Restart / quit during play | R / Q |
 
-Inside settings, use Up / Down to choose a row, Left / Right to adjust values,
-Enter to edit `NAME`, and Esc or F1 to close the panel. `PRESET` switches
-between beginner, balanced, fast, and custom handling; `CONTROL` can limit
-movement to hybrid, arrows, or WASD; `WINDOW` scales the fixed pixel canvas;
-`VOLUME` adjusts cue loudness. Settings are saved to
-`tetris_settings.txt`.
-When a game-over score reaches the local leaderboard, type a 3-12 character
-name and press Enter, or press Esc to save it under the default player name.
+In the main and pause menus, use Up / Down or W / S to move and Enter or
+Space to select the highlighted item. Use Esc or P to resume a paused game.
+Esc quits from the main menu.
 
-## Scoring
+## A few things to try
 
-| Action | Points |
-| --- | --- |
-| Soft drop | 1 per row |
-| Hard drop | 2 per row |
-| Line clear | 100 / 300 / 500 / 800 |
-| T-spin clear | 800 / 1200 / 1600 |
-| Style-spin clear | 400 / 700 / 1000 / 1200 |
-| Combo bonus | +50 for each clear after the first consecutive clear |
-| Back-to-back bonus | +50% of the difficult clear score |
-| Perfect clear bonus | 800 / 1200 / 1800 / 3200 |
+- Save a piece with **hold** and use the ghost to line up your next drop
+- Rotate near a wall or the stack: wall kicks and a short lock delay leave
+  room for last-second adjustments
+- Chain clears for combo and back-to-back bonuses, or try a T-spin. There
+  are also custom spin-clear bonuses for L, J, I, S and Z pieces
+- Beat your local top-five scores. Each 10 cleared lines raises the level
+  and makes pieces fall faster
 
-Level increases every 10 cleared lines. The drop speed ramps up as the level
-rises. Best score is saved to `tetris_highscore.txt`, and the local top-five
-leaderboard is saved to `tetris_leaderboard.txt`.
+If your score makes the leaderboard, enter a name with 3–12 letters or digits
+and press Enter. Esc saves it under your default player name.
 
-## Build And Play
+## Make it feel right
 
-### Download a Windows build
+Press **F1** to open settings. Start with **BEGINNER**, **BALANCED** or **FAST**,
+or adjust **DAS** (the wait before a held key repeats) and **ARR** (the time
+between repeats) yourself. You can also change the line-clear flash duration,
+choose arrow keys, WASD or both, resize the window, adjust sound, and set your
+player name.
 
-Open a successful [CI run](https://github.com/huiishan99/game-cpp-tetris/actions/workflows/ci.yml)
-and download the `tetris-windows-x64` artifact (GitHub sign-in required).
-Extract the ZIP into a writable folder, keep the `Font` folder beside
-`main.exe`, and run `main.exe`. The MSVC build includes its C++ runtime and
-does not need the old MinGW DLLs from `lib`.
+Use Up / Down to choose a setting and Left / Right to change it. On **NAME**,
+press Enter to edit, then Enter to save. Esc or F1 closes settings; while
+editing a name, Esc cancels that edit first.
 
-### Build from source
+<details>
+<summary>See the settings screen</summary>
 
-On Windows, open PowerShell in the project folder:
+![Settings for movement, controls, window size, sound and player name](docs/screenshots/settings.png)
 
-```powershell
-.\build.bat
-.\main.exe
-```
+</details>
 
-To make a shareable build:
+Settings and scores stay local. The game saves `tetris_settings.txt`,
+`tetris_highscore.txt` and `tetris_leaderboard.txt` in the folder you run it
+from, so use a folder you can write to.
+
+## Build from source
+
+The game window is Windows-only. You'll need CMake 3.16 or newer and a C++17
+compiler. For the build below, install Visual Studio or its Build Tools with
+**Desktop development with C++**, then run these commands in PowerShell from
+the project folder:
 
 ```powershell
-.\package.bat
-```
-
-That creates `dist\tetris-win-<version>.zip` and
-`dist\tetris-win-latest.zip` with the executable, bundled font, docs, README,
-and runtime DLLs beside the executable. You only need to rebuild or repackage
-after changing the source.
-
-For an installer build, run `package.bat` first, then build
-`installer\tetris.iss` with Inno Setup 6. The output is
-`dist\tetris-setup-<version>.exe`.
-
-Or build directly with MinGW-w64:
-
-```powershell
-g++ -std=c++17 -Wall -Wextra src\*.cpp -mwindows -lwinmm -lgdi32 -luser32 -o main.exe
-.\main.exe
-```
-
-Or use CMake:
-
-```powershell
-cmake -S . -B build
+cmake -S . -B build -A x64
 cmake --build build --config Release
-.\build\Release\main.exe
-```
-
-To stage the CMake build with its font and documentation:
-
-```powershell
 cmake --install build --config Release --prefix dist/tetris-windows-x64
 cd dist/tetris-windows-x64
 .\main.exe
 ```
 
-## Core Tests
+The install step puts the executable, font and documentation together in
+`dist/tetris-windows-x64`. Run from that folder so the font and local save
+files are found in the right place.
 
-The game rules are portable and can be tested without the Win32 window:
+If you already use MinGW-w64, `build.bat` builds `main.exe` in the project
+folder using `g++` on your PATH. It can also use `cl` from a Visual Studio
+Developer Command Prompt.
 
-```bash
-c++ -std=c++17 -Wall -Wextra -Isrc tests/core_tests.cpp src/block.cpp src/blocks.cpp src/game.cpp src/grid.cpp src/high_score.cpp src/leaderboard.cpp src/position.cpp src/settings.cpp src/settings_options.cpp src/sound.cpp -o /tmp/tetris_core_tests
-/tmp/tetris_core_tests
-```
+## Tests
 
-With CMake:
+The game rules can be tested on Windows, Linux and macOS without opening a
+window. Run these from the project folder:
 
-```bash
+```sh
 cmake -S . -B build
-cmake --build build --target tetris_core_tests
-ctest --test-dir build
+cmake --build build --config Release --target tetris_core_tests
+ctest --test-dir build -C Release -R tetris_core_tests --output-on-failure
 ```
 
-## Project Map
-
-```text
-src/app_config.h   Window size, file names, timer IDs, font names
-src/main.cpp        Win32 window, drawing, input, timers
-src/game.cpp        Game rules, scoring, hold, spin detection
-src/grid.cpp        Board storage and row clearing
-src/high_score.cpp  Best-score file
-src/leaderboard.cpp Local top-five leaderboard file
-src/settings.cpp    DAS, ARR, effect, and sound settings file
-src/settings_options.cpp  Tuning presets and control scheme helpers
-src/sound.cpp       Procedural Windows WAV cues, no-op elsewhere
-tests/core_tests.cpp
-```
-
-CI runs the portable core tests on Ubuntu, macOS, and Windows. Windows also
-runs real-window integration tests against the unchanged Win32 input/rendering
-code using deterministic board fixtures, then sends keyboard messages to the
-packaged executable for a gameplay smoke pass. Screenshots and assertion
-reports are uploaded as `tetris-windows-test-evidence`; the downloadable game
-is `tetris-windows-x64`. These artifacts expire after 30 days. Automated tests
-do not replace human checks of input feel, visual quality, or audible sound.
-
+CI also checks the native Windows UI and runs a smoke test of the packaged
+game. Its screenshots and reports are available in the
+`tetris-windows-test-evidence` artifact alongside each Windows build.
